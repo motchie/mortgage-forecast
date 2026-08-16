@@ -36,8 +36,8 @@ h1 { margin-bottom: 0; font-family: Georgia, "Yu Mincho", serif; font-size: clam
 .metric-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 12px; }
 .metric { grid-column: span 2; min-height: 126px; padding: 20px; border: 1px solid #cbd3cd; background: #fff; display: flex; flex-direction: column; justify-content: space-between; }
 .metric-primary { grid-column: span 3; background: #173d31; color: #fff; border-color: #173d31; }
-.metric:nth-child(2) { grid-column: span 3; }
-.metric:nth-child(5) { border-width: 2px; border-color: #789087; }
+.metric:nth-child(2), .metric:nth-child(3), .metric:nth-child(4) { grid-column: span 3; }
+.metric:last-child { border-width: 2px; border-color: #789087; }
 .metric span { color: #5e6b65; font-size: .86rem; }
 .metric-primary span { color: #c7ddd4; }
 .metric strong { font-size: clamp(1.2rem, 2vw, 1.75rem); font-variant-numeric: tabular-nums; }

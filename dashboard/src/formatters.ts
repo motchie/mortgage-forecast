@@ -21,6 +21,9 @@ export const formatDateTime = (value: string): string =>
 export const formatRate = (value: number): string =>
   `${new Intl.NumberFormat("ja-JP", { maximumFractionDigits: 3 }).format(value * 100)}%`;
 
+export const formatPercentage = (value: number): string =>
+  `${new Intl.NumberFormat("ja-JP", { maximumFractionDigits: 1 }).format(value * 100)}%`;
+
 export const formatMonth = (value: string): string => {
   const [year, month] = value.slice(0, 7).split("-").map(Number);
   return `${year}年${month}月`;

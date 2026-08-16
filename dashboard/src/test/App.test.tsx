@@ -36,6 +36,10 @@ describe("住宅ローン予測ダッシュボード", () => {
     expect(currentPanel).not.toBeNull();
     expect(within(currentPanel!).getByText("14,000,000円")).toBeInTheDocument();
     expect(within(currentPanel!).getByText("65,000円")).toBeInTheDocument();
+    expect(within(currentPanel!).getByText("6,000,000円")).toBeInTheDocument();
+    expect(within(currentPanel!).getByText("30%")).toBeInTheDocument();
+    expect(screen.getAllByText("返済済み元金")).toHaveLength(2);
+    expect(screen.getAllByText("元金返済率")).toHaveLength(2);
     expect(screen.getAllByRole("heading", { name: "Example variable-rate loan" })).toHaveLength(2);
     expect(screen.getByText("LOCAL ONLY · SAMPLE DATA")).toBeInTheDocument();
     expect(screen.getByRole("heading", { name: "Current" })).toBeInTheDocument();
