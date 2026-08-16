@@ -9,6 +9,7 @@ export const formatDate = (value: string): string =>
     year: "numeric",
     month: "long",
     day: "numeric",
+    timeZone: "Asia/Tokyo",
   }).format(new Date(`${value}T00:00:00+09:00`));
 
 export const formatDateTime = (value: string): string =>
