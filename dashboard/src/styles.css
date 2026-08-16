@@ -97,7 +97,6 @@ h1 { margin-bottom: 0; font-family: Georgia, "Yu Mincho", serif; font-size: clam
 .table-warning { padding: 3px 7px; color: #6a3c12; background: #fff0dc; border: 1px solid #c99056; font-size: .72rem; font-weight: 800; }
 
 .sensitivity-layout { display: grid; gap: 24px; }
-.highlight-row { background: #fff8e8; }
 .status-layout { display: grid; grid-template-columns: minmax(280px, .85fr) minmax(0, 1.6fr); gap: 16px; }
 .status-pass { width: fit-content; margin-bottom: 16px; padding: 5px 10px; color: #174f3e; background: #dfeee7; font-weight: 850; }
 .status-summary > strong { display: block; margin-bottom: 18px; font-size: 1.12rem; }
