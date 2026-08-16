@@ -143,6 +143,11 @@ my-loan:
 `verification_status: scenario` とします。Current / Base / Higher / Stressを用意するとdashboardの
 標準比較が分かりやすくなります。
 
+金利pathの変更日は利息計算に使う金利だけを変更します。月返済額は金利変更のたびには変わらず、
+loan YAMLの `repayment.payment_review.schedule.dates` に登録した見直し日だけで再計算されます。
+公開サンプルのBase / Higher / Stressはこの違いを確認できるよう、年次の段階的な金利pathと5年ごとの
+返済額見直しを組み合わせています。
+
 ### `sources.yaml`
 
 数値やルールの根拠を匿名化して記録します。最低1件を `type: actual` とし、返済予定表の取得日を

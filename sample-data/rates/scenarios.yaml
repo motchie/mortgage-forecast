@@ -16,70 +16,107 @@ scenarios:
   current:
     label: Current rate unchanged
     type: constant_loan_rate
-    description: Mechanical case where the sample current rate continues; not a forecast.
-    updated_at: 2026-08-15
+    description: 現在の貸出金利が満期まで続く比較基準です。将来予測ではありません。
+    updated_at: 2026-08-16
     source:
       type: current_snapshot
-      description: Artificial current rate used by the sample dataset
+      description: サンプルデータの現在金利
     verification_status: scenario
     annual_rate: current
 
   base:
     label: Base
-    type: loan_rate_path
-    description: Artificial path with a gradual rate increase.
-    updated_at: 2026-08-15
+    type: short_prime_path
+    description: 貸出金利が年0.1ポイントずつ上昇し、満期直前まで緩やかに上昇する基本ケースです。
+    updated_at: 2026-08-16
     source:
       type: manual
-      description: Artificial base scenario
+      description: 年0.1ポイントずつ上昇する架空のサンプル設定
     verification_status: scenario
-    rates:
-      - effective_date: 2027-01-21
-        annual_rate: "0.0220"
-      - effective_date: 2028-01-21
-        annual_rate: "0.0250"
-    terminal_rate: "0.0250"
+    short_prime:
+      - { effective_date: 2027-08-20, annual_rate: "0.0240" }
+      - { effective_date: 2028-08-20, annual_rate: "0.0250" }
+      - { effective_date: 2029-08-20, annual_rate: "0.0260" }
+      - { effective_date: 2030-08-20, annual_rate: "0.0270" }
+      - { effective_date: 2031-08-20, annual_rate: "0.0280" }
+      - { effective_date: 2032-08-20, annual_rate: "0.0290" }
+      - { effective_date: 2033-08-20, annual_rate: "0.0300" }
+      - { effective_date: 2034-08-20, annual_rate: "0.0310" }
+      - { effective_date: 2035-08-20, annual_rate: "0.0320" }
+      - { effective_date: 2036-08-20, annual_rate: "0.0330" }
+      - { effective_date: 2037-08-20, annual_rate: "0.0340" }
+      - { effective_date: 2038-08-20, annual_rate: "0.0350" }
+      - { effective_date: 2039-08-20, annual_rate: "0.0360" }
+      - { effective_date: 2040-08-20, annual_rate: "0.0370" }
+      - { effective_date: 2041-08-20, annual_rate: "0.0380" }
+      - { effective_date: 2042-08-20, annual_rate: "0.0390" }
+      - { effective_date: 2043-08-20, annual_rate: "0.0400" }
+      - { effective_date: 2044-08-20, annual_rate: "0.0410" }
+    terminal_rate: "0.0410"
 
   higher:
     label: Higher
     type: loan_rate_path
-    description: Artificial path above Base.
-    updated_at: 2026-08-15
+    description: 貸出金利が年0.2ポイントずつ上昇し、Baseより速く上昇するケースです。
+    updated_at: 2026-08-16
     source:
       type: manual
-      description: Artificial higher-rate scenario
+      description: 年0.2ポイントずつ上昇する架空のサンプル設定
     verification_status: scenario
     rates:
-      - effective_date: 2027-01-21
-        annual_rate: "0.0300"
-      - effective_date: 2028-01-21
-        annual_rate: "0.0350"
-    terminal_rate: "0.0350"
+      - { effective_date: 2027-08-20, annual_rate: "0.0200" }
+      - { effective_date: 2028-08-20, annual_rate: "0.0220" }
+      - { effective_date: 2029-08-20, annual_rate: "0.0240" }
+      - { effective_date: 2030-08-20, annual_rate: "0.0260" }
+      - { effective_date: 2031-08-20, annual_rate: "0.0280" }
+      - { effective_date: 2032-08-20, annual_rate: "0.0300" }
+      - { effective_date: 2033-08-20, annual_rate: "0.0320" }
+      - { effective_date: 2034-08-20, annual_rate: "0.0340" }
+      - { effective_date: 2035-08-20, annual_rate: "0.0360" }
+      - { effective_date: 2036-08-20, annual_rate: "0.0380" }
+      - { effective_date: 2037-08-20, annual_rate: "0.0400" }
+      - { effective_date: 2038-08-20, annual_rate: "0.0420" }
+      - { effective_date: 2039-08-20, annual_rate: "0.0440" }
+      - { effective_date: 2040-08-20, annual_rate: "0.0460" }
+      - { effective_date: 2041-08-20, annual_rate: "0.0480" }
+      - { effective_date: 2042-08-20, annual_rate: "0.0500" }
+      - { effective_date: 2043-08-20, annual_rate: "0.0520" }
+      - { effective_date: 2044-08-20, annual_rate: "0.0540" }
+    terminal_rate: "0.0540"
 
   stress:
     label: Stress
-    type: loan_rate_path
-    description: Artificial severe path for cap and unpaid-interest testing.
-    updated_at: 2026-08-15
+    type: short_prime_path
+    description: 貸出金利が年0.3ポイントずつ上昇し、約5.5%に達した後はその水準が続くストレスケースです。
+    updated_at: 2026-08-16
     source:
       type: manual
-      description: Artificial stress scenario
+      description: 年0.3ポイントずつ上昇し貸出金利約5.5%を上限とする架空のサンプル設定
     verification_status: scenario
-    rates:
-      - effective_date: 2027-01-21
-        annual_rate: "0.0500"
-      - effective_date: 2028-01-21
-        annual_rate: "0.0600"
+    short_prime:
+      - { effective_date: 2027-08-20, annual_rate: "0.0260" }
+      - { effective_date: 2028-08-20, annual_rate: "0.0290" }
+      - { effective_date: 2029-08-20, annual_rate: "0.0320" }
+      - { effective_date: 2030-08-20, annual_rate: "0.0350" }
+      - { effective_date: 2031-08-20, annual_rate: "0.0380" }
+      - { effective_date: 2032-08-20, annual_rate: "0.0410" }
+      - { effective_date: 2033-08-20, annual_rate: "0.0440" }
+      - { effective_date: 2034-08-20, annual_rate: "0.0470" }
+      - { effective_date: 2035-08-20, annual_rate: "0.0500" }
+      - { effective_date: 2036-08-20, annual_rate: "0.0530" }
+      - { effective_date: 2037-08-20, annual_rate: "0.0560" }
+      - { effective_date: 2038-08-20, annual_rate: "0.0590" }
+      - { effective_date: 2039-08-20, annual_rate: "0.0600" }
     terminal_rate: "0.0600"
 
   custom-short-prime:
     label: Custom short prime
     type: short_prime_path
-    description: Artificial short-prime path using the configured spread.
-    updated_at: 2026-08-15
+    description: 設定済みのスプレッドから貸出金利を導く短期プライムレート経路の例です。
+    updated_at: 2026-08-16
     source:
       type: manual
-      description: Artificial short-prime scenario
+      description: 架空の短期プライムレートシナリオ
     verification_status: scenario
     short_prime:
       - effective_date: 2027-01-21

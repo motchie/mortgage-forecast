@@ -109,7 +109,9 @@ const scenarios: Scenario[] = scenarioMetadata.map(([id, label]) => ({
   id,
   label,
   type: id === "current" ? "constant_loan_rate" : "loan_rate_path",
-  description: `Artificial ${label} scenario`,
+  description: id === "current"
+    ? "現在金利が続く比較基準です。"
+    : `${label}の段階的な金利上昇を表すテスト用シナリオです。`,
   updated_at: "2026-08-15",
   verification_status: "scenario",
   ...(id === "current"

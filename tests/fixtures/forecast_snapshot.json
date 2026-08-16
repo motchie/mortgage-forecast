@@ -15,9 +15,9 @@
   },
   "scenario_summaries": [
     { "cap_triggers": 0, "extra_final_payment": 0, "final_payment": 76031, "id": "current", "maximum_monthly_payment": 76052, "unpaid_first_date": null },
-    { "cap_triggers": 1, "extra_final_payment": 0, "final_payment": 81884, "id": "base", "maximum_monthly_payment": 81899, "unpaid_first_date": null },
-    { "cap_triggers": 1, "extra_final_payment": 0, "final_payment": 96360, "id": "higher", "maximum_monthly_payment": 96404, "unpaid_first_date": null },
-    { "cap_triggers": 3, "extra_final_payment": 4970562, "final_payment": 5097516, "id": "stress", "maximum_monthly_payment": 126954, "unpaid_first_date": "2028-02-20" }
+    { "cap_triggers": 0, "extra_final_payment": 24513, "final_payment": 108285, "id": "base", "maximum_monthly_payment": 83772, "unpaid_first_date": null },
+    { "cap_triggers": 0, "extra_final_payment": 55377, "final_payment": 147593, "id": "higher", "maximum_monthly_payment": 92216, "unpaid_first_date": null },
+    { "cap_triggers": 1, "extra_final_payment": 0, "final_payment": 101600, "id": "stress", "maximum_monthly_payment": 101621, "unpaid_first_date": null }
   ],
   "schema_version": "1.1",
   "presentation": { "show_trend_charts": true },

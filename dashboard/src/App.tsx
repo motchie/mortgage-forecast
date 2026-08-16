@@ -58,10 +58,35 @@ function rateAssumption(scenario: Scenario, data: ForecastDocument, scope: strin
   }
 
   const points = scenario.rates ?? [];
-  const assumptions = ["現在金利", ...points.map((point) => `${formatDate(point.effective_date)}から${formatRate(point.annual_rate)}`)];
+  const loans = scope === "combined" ? data.loans : data.loans.filter((loan) => loan.id === scope);
+  const formatScenarioRate = (annualRate: number) => {
+    if (scenario.type !== "short_prime_path") return formatRate(annualRate);
+    const rates = loans.map((loan) => `${scope === "combined" && loans.length > 1 ? `${loan.id} ` : ""}${formatRate(annualRate + loan.rate_model.spread)}`);
+    return rates.join(" / ");
+  };
+  if (points.length >= 4) {
+    const years = points.map((point) => Number(point.effective_date.slice(0, 4)));
+    const monthDays = points.map((point) => point.effective_date.slice(5));
+    const increments = points.slice(1).map((point, index) => point.annual_rate - points[index].annual_rate);
+    const step = increments[0];
+    const tolerance = 1e-9;
+    const annual = years.every((year, index) => index === 0 || year === years[index - 1] + 1)
+      && monthDays.every((monthDay) => monthDay === monthDays[0]);
+    const regularBeforeLast = increments.slice(0, -1).every((increment) => Math.abs(increment - step) < tolerance);
+    const lastIncrement = increments.at(-1) ?? step;
+    const capped = regularBeforeLast && lastIncrement > 0 && lastIncrement < step - tolerance;
+    const regular = increments.every((increment) => Math.abs(increment - step) < tolerance);
+    if (annual && step > 0 && (regular || capped)) {
+      const [, month, day] = points[0].effective_date.split("-").map(Number);
+      const finalRate = formatScenarioRate(scenario.terminal_rate ?? points.at(-1)!.annual_rate);
+      const ending = capped ? `${finalRate}で頭打ち` : `${finalRate}（以後継続）`;
+      return `現在金利 → ${years[0]}年から毎年${formatRate(step).replace("%", "ポイント")}ずつ上昇（各年${month}月${day}日の次回返済から適用） → ${years.at(-1)}年に${ending}`;
+    }
+  }
+  const assumptions = ["現在金利", ...points.map((point) => `${formatDate(point.effective_date)}の次回返済から${formatScenarioRate(point.annual_rate)}`)];
   const lastRate = points.at(-1)?.annual_rate;
   if (scenario.terminal_rate != null && scenario.terminal_rate !== lastRate) {
-    assumptions.push(`以後${formatRate(scenario.terminal_rate)}`);
+    assumptions.push(`以後${formatScenarioRate(scenario.terminal_rate)}`);
   } else if (points.length > 0) {
     assumptions[assumptions.length - 1] += "（以後継続）";
   }

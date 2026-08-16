@@ -49,15 +49,49 @@ describe("住宅ローン予測ダッシュボード", () => {
     expect(screen.getByText("現在の金利が続く機械的ケース")).toBeInTheDocument();
     expect(screen.getAllByText("将来金利についての手動仮定")).toHaveLength(3);
     expect(screen.getByText("現在金利1.8%を継続")).toBeInTheDocument();
-    expect(screen.getByText("現在金利 → 2027年1月1日から2%（以後継続）")).toBeInTheDocument();
-    expect(screen.getByText("現在金利 → 2027年1月1日から3%（以後継続）")).toBeInTheDocument();
-    expect(screen.getByText("現在金利 → 2027年1月1日から5%（以後継続）")).toBeInTheDocument();
+    expect(screen.getByText("現在金利 → 2027年1月1日の次回返済から2%（以後継続）")).toBeInTheDocument();
+    expect(screen.getByText("現在金利 → 2027年1月1日の次回返済から3%（以後継続）")).toBeInTheDocument();
+    expect(screen.getByText("現在金利 → 2027年1月1日の次回返済から5%（以後継続）")).toBeInTheDocument();
     expect(screen.getByText("Golden tests validated")).toBeInTheDocument();
     expect(screen.getByText("4か月検証済み")).toBeInTheDocument();
     expect(await screen.findByRole("table", { name: "一定金利ごとの返済リスク" })).toBeInTheDocument();
     expect(screen.getAllByText("未検証仮定あり").length).toBeGreaterThan(0);
     expect(screen.getByText(/モデル仕様やデータ品質に関する表示/)).toBeInTheDocument();
     expect(screen.getByText(/将来シナリオの正確さや金利予測を意味しません/)).toBeInTheDocument();
+  });
+
+  it("短期プライム連動シナリオはローンごとの貸出金利を表示する", async () => {
+    const secondLoan = {
+      ...forecast.loans[0],
+      id: "second-loan",
+      display_name: "Second variable-rate loan",
+      rate_model: { ...forecast.loans[0].rate_model, spread: -0.0049 },
+    };
+    const document: ForecastDocument = {
+      ...forecast,
+      loans: [...forecast.loans, secondLoan],
+      scenarios: forecast.scenarios.map((scenario) => {
+        if (scenario.id !== "base" && scenario.id !== "stress") return scenario;
+        const finalRate = scenario.id === "stress" ? 0.03475 : 0.03525;
+        return {
+          ...scenario,
+          type: "short_prime_path",
+          rates: [
+            { effective_date: "2036-01-10", annual_rate: 0.03125 },
+            { effective_date: "2037-01-10", annual_rate: 0.03225 },
+            { effective_date: "2038-01-10", annual_rate: 0.03325 },
+            { effective_date: "2039-01-10", annual_rate: 0.03425 },
+            { effective_date: "2040-01-10", annual_rate: finalRate },
+          ],
+          terminal_rate: finalRate,
+        };
+      }),
+    };
+    mockForecast(document);
+    render(<App />);
+
+    expect(await screen.findByText("現在金利 → 2036年から毎年0.1ポイントずつ上昇（各年1月10日の次回返済から適用） → 2040年にexample-loan 3.025% / second-loan 3.035%（以後継続）")).toBeInTheDocument();
+    expect(screen.getByText("現在金利 → 2036年から毎年0.1ポイントずつ上昇（各年1月10日の次回返済から適用） → 2040年にexample-loan 2.975% / second-loan 2.985%で頭打ち")).toBeInTheDocument();
   });
 
   it("表示対象とグラフの代替表をキーボード操作可能なUIで切り替える", async () => {
