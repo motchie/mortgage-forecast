@@ -84,6 +84,29 @@ describe("住宅ローン予測ダッシュボード", () => {
     expect(screen.queryByRole("button", { name: "データ表を表示" })).not.toBeInTheDocument();
   });
 
+  it("ペアローン合計では同じモデル上の注意を1件だけ表示する", async () => {
+    const stress = forecast.combined.scenarios.find((scenario) => scenario.scenario_id === "stress")!;
+    const warning = stress.warnings[0];
+    const document: ForecastDocument = {
+      ...forecast,
+      combined: {
+        ...forecast.combined,
+        scenarios: forecast.combined.scenarios.map((scenario) => scenario.scenario_id === "stress" ? {
+          ...scenario,
+          warnings: [warning, { ...warning, scope: { ...warning.scope, loan_id: "second-loan" } }],
+        } : scenario),
+      },
+    };
+    mockForecast(document);
+    render(<App />);
+
+    const heading = await screen.findByRole("heading", { name: "Stress" });
+    const card = heading.closest("article");
+    expect(card).not.toBeNull();
+    expect(within(card!).getByText("モデル上の注意 1件")).toBeInTheDocument();
+    expect(within(card!).getAllByText("最終回の利息期間・端数処理は未検証")).toHaveLength(1);
+  });
+
   it("主要画面に自動検出可能なアクセシビリティ違反がない", async () => {
     mockForecast();
     const { container } = render(<App />);

@@ -36,7 +36,7 @@ function warningText(warning: ModelWarning) {
 }
 
 function uniqueWarnings(warnings: ModelWarning[]) {
-  return [...new Map(warnings.map((warning) => [`${warning.code}-${warning.scope.loan_id}`, warning])).values()];
+  return [...new Map(warnings.map((warning) => [warning.code, warning])).values()];
 }
 
 function loanView(result: ScenarioResult): ScenarioView {
@@ -92,7 +92,7 @@ function ScenarioCard({ scenario, view, rate }: { scenario: Scenario; view: Scen
       <div className={`emphasis-row ${hasUnverifiedWarning ? "result-warning-row" : ""}`}><dt>追加最終返済額{hasUnverifiedWarning && <small>未検証の計算仮定を含む</small>}</dt><dd>{formatYen(view.extraFinalPayment)}</dd></div>
       <div><dt>総支払利息</dt><dd>{formatYen(view.totalInterest)}</dd></div>
     </dl>
-    {warnings.length > 0 && <details className="card-warnings"><summary>モデル上の注意 {warnings.length}件</summary><ul>{warnings.map((warning) => <li key={`${warning.code}-${warning.scope.loan_id}`}><span className={`severity severity-${warning.severity}`}>{warning.severity}</span>{warningText(warning)}</li>)}</ul></details>}
+    {warnings.length > 0 && <details className="card-warnings"><summary>モデル上の注意 {warnings.length}件</summary><ul>{warnings.map((warning) => <li key={warning.code}><span className={`severity severity-${warning.severity}`}>{warning.severity}</span>{warningText(warning)}</li>)}</ul></details>}
   </article>;
 }
 
