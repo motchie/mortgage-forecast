@@ -4,6 +4,7 @@ import userEvent from "@testing-library/user-event";
 import { axe } from "jest-axe";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import App from "../App";
+import type { ForecastDocument } from "../types";
 import forecast from "./forecast-fixture";
 
 vi.mock("recharts", () => ({
@@ -16,8 +17,8 @@ vi.mock("recharts", () => ({
   YAxis: () => null,
 }));
 
-function mockForecast() {
-  vi.stubGlobal("fetch", vi.fn().mockResolvedValue({ ok: true, json: async () => forecast }));
+function mockForecast(document: ForecastDocument = forecast) {
+  vi.stubGlobal("fetch", vi.fn().mockResolvedValue({ ok: true, json: async () => document }));
 }
 
 afterEach(() => {
@@ -69,6 +70,18 @@ describe("住宅ローン予測ダッシュボード", () => {
     await user.click(toggles[0]);
     expect(screen.getByRole("table", { name: "残高推移の年次データ" })).toBeInTheDocument();
     expect(toggles[0]).toHaveAttribute("aria-expanded", "true");
+  });
+
+  it("設定で推移グラフを非表示にし、データ表だけを表示する", async () => {
+    mockForecast({ ...forecast, presentation: { show_trend_charts: false } });
+    render(<App />);
+    await screen.findByRole("heading", { name: "残高と月返済額の推移" });
+
+    expect(screen.queryByRole("img", { name: /残高推移。/ })).not.toBeInTheDocument();
+    expect(screen.queryByRole("img", { name: /月返済額推移。/ })).not.toBeInTheDocument();
+    expect(screen.getByRole("table", { name: "残高推移の年次データ" })).toBeInTheDocument();
+    expect(screen.getByRole("table", { name: "月返済額推移の年次データ" })).toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "データ表を表示" })).not.toBeInTheDocument();
   });
 
   it("主要画面に自動検出可能なアクセシビリティ違反がない", async () => {

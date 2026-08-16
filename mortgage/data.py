@@ -226,6 +226,13 @@ def validate_data_directory(data_dir: Path) -> None:
         raise DataValidationError(
             f"Unsupported data_schema_version {version!r}; expected {DATA_SCHEMA_VERSION!r}"
         )
+    dashboard = manifest.get("dashboard", {})
+    if not isinstance(dashboard, dict):
+        raise DataValidationError("data-schema.yaml dashboard must be a mapping")
+    if not isinstance(dashboard.get("show_trend_charts", True), bool):
+        raise DataValidationError(
+            "data-schema.yaml dashboard.show_trend_charts must be a boolean"
+        )
 
     loan_paths = sorted((data_dir / "loans").glob("*.yaml"))
     if not loan_paths:

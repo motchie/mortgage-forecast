@@ -19,7 +19,8 @@
     { "cap_triggers": 1, "extra_final_payment": 0, "final_payment": 96360, "id": "higher", "maximum_monthly_payment": 96404, "unpaid_first_date": null },
     { "cap_triggers": 3, "extra_final_payment": 4970562, "final_payment": 5097516, "id": "stress", "maximum_monthly_payment": 126954, "unpaid_first_date": "2028-02-20" }
   ],
-  "schema_version": "1.0",
+  "schema_version": "1.1",
+  "presentation": { "show_trend_charts": true },
   "sensitivity": {
     "0.018": { "cap_triggers": 0, "extra_final_payment": 0, "final_payment": 76031, "maximum_monthly_payment": 76052, "unpaid_first_date": null },
     "0.03": { "cap_triggers": 1, "extra_final_payment": 0, "final_payment": 90411, "maximum_monthly_payment": 90413, "unpaid_first_date": null },

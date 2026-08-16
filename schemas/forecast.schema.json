@@ -7,6 +7,7 @@
   "required": [
     "schema_version",
     "data_source",
+    "presentation",
     "generated_at",
     "model_status",
     "actual",
@@ -18,13 +19,21 @@
     "warnings"
   ],
   "properties": {
-    "schema_version": { "const": "1.0" },
+    "schema_version": { "const": "1.1" },
     "data_source": {
       "type": "object",
       "additionalProperties": false,
       "required": ["type"],
       "properties": {
         "type": { "enum": ["sample", "external"] }
+      }
+    },
+    "presentation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["show_trend_charts"],
+      "properties": {
+        "show_trend_charts": { "type": "boolean" }
       }
     },
     "generated_at": { "type": "string", "format": "date-time" },

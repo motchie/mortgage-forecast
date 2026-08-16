@@ -57,6 +57,20 @@ def test_malformed_yaml_has_clear_error(tmp_path: Path) -> None:
         validate_data_directory(data_dir)
 
 
+def test_dashboard_chart_setting_must_be_boolean(tmp_path: Path) -> None:
+    data_dir = copied_sample(tmp_path)
+    manifest = data_dir / "data-schema.yaml"
+    manifest.write_text(
+        manifest.read_text(encoding="utf-8").replace(
+            "show_trend_charts: true", 'show_trend_charts: "false"'
+        ),
+        encoding="utf-8",
+    )
+
+    with pytest.raises(DataValidationError, match="show_trend_charts must be a boolean"):
+        validate_data_directory(data_dir)
+
+
 def test_invalid_and_duplicated_loan_ids_are_rejected(tmp_path: Path) -> None:
     invalid = copied_sample(tmp_path / "invalid")
     loan_path = invalid / "loans/example-loan.yaml"

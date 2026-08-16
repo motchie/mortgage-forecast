@@ -52,7 +52,13 @@ public repository内へ作らず、[`examples/private-data-template/`](../exampl
 data_schema_version: "1.0"
 dataset_type: private
 description: Private local mortgage data
+dashboard:
+  show_trend_charts: false
 ```
+
+`dashboard.show_trend_charts` は残高推移・月返済額推移の表示方法です。`true`ならグラフを表示し、
+必要に応じてデータ表を開けます。`false`ならグラフを表示せず、年次データ表だけを常時表示します。
+省略時は`true`です。一定金利の感応度分析グラフには影響しません。
 
 ### `loans/<loan-id>.yaml`
 

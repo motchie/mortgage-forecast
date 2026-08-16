@@ -124,8 +124,9 @@ const scenarios: Scenario[] = scenarioMetadata.map(([id, label]) => ({
 const sensitivityCases = [0.018, 0.03, 0.04, 0.05].map(sensitivity);
 
 const forecastFixture: ForecastDocument = {
-  schema_version: "1.0",
+  schema_version: "1.1",
   data_source: { type: "sample" },
+  presentation: { show_trend_charts: true },
   generated_at: "2026-08-15T12:00:00+09:00",
   model_status: {
     golden_tests_passed: true,

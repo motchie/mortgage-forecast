@@ -39,7 +39,7 @@ from .scenarios import (
 from .simulator import simulate_fixed_payment_period
 
 
-SCHEMA_VERSION = "1.0"
+SCHEMA_VERSION = "1.1"
 CALCULATION_ENGINE_VERSION = "0.1.0"
 
 
@@ -77,6 +77,12 @@ def _load_sources(data_dir: Path) -> list[dict[str, Any]]:
             source["url"] = str(raw["url"])
         sources.append(source)
     return sources
+
+
+def _presentation(data_dir: Path) -> dict[str, bool]:
+    manifest = _load_yaml(data_dir, data_dir / "data-schema.yaml")
+    dashboard = manifest.get("dashboard", {})
+    return {"show_trend_charts": bool(dashboard.get("show_trend_charts", True))}
 
 
 def _load_actual_rate_changes(data_dir: Path, loan_id: str) -> list[RateChange]:
@@ -795,6 +801,7 @@ def build_forecast(
     return {
         "schema_version": SCHEMA_VERSION,
         "data_source": {"type": data_source_type},
+        "presentation": _presentation(data_dir),
         "generated_at": generated_at.isoformat(),
         "model_status": {
             "golden_tests_passed": bool(actual_rows) and all(actual_matches),

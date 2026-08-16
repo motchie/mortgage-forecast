@@ -85,6 +85,7 @@ def projection(document: dict[str, Any]) -> dict[str, Any]:
     return {
         "schema_version": document["schema_version"],
         "data_source": document["data_source"],
+        "presentation": document["presentation"],
         "generated_at": document["generated_at"],
         "model_status": document["model_status"],
         "actual_row_count": len(document["actual"]["monthly_results"]),

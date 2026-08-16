@@ -117,6 +117,7 @@ export interface Source { id: string; publisher: string; type: VerificationStatu
 export interface ForecastDocument {
   schema_version: string;
   data_source: { type: "sample" | "external" };
+  presentation: { show_trend_charts: boolean };
   generated_at: string;
   model_status: {
     golden_tests_passed: boolean;

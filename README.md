@@ -91,6 +91,14 @@ sources.yaml
 可能性があります。required file、YAML、loan ID、重複ID、actual CSV列を生成前に検証します。
 外部data rootの絶対pathは、生成する `forecast.json` に記録しません。
 
+残高推移・月返済額推移をグラフではなく表だけで表示する場合は、private data側の
+`data-schema.yaml`に次を設定します。省略時は`true`です。
+
+```yaml
+dashboard:
+  show_trend_charts: false
+```
+
 ## 初期データと更新方法
 
 実データで利用するには、契約値、現在残高・金利・返済額、銀行返済明細、実金利履歴、将来scenario
