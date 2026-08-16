@@ -67,8 +67,14 @@ describe("住宅ローン予測ダッシュボード", () => {
     await screen.findByRole("heading", { name: "金利仮定ごとの返済リスク" });
 
     const picker = screen.getByRole("combobox", { name: "表示対象" });
+    const trendPicker = screen.getByRole("combobox", { name: "推移の表示対象" });
     await user.selectOptions(picker, "example-loan");
     expect(picker).toHaveValue("example-loan");
+    expect(trendPicker).toHaveValue("example-loan");
+
+    await user.selectOptions(trendPicker, "combined");
+    expect(trendPicker).toHaveValue("combined");
+    expect(picker).toHaveValue("combined");
 
     const toggles = screen.getAllByRole("button", { name: "データ表を表示" });
     await user.click(toggles[0]);
