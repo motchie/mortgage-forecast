@@ -19,6 +19,7 @@ caption { padding: 0 0 12px; text-align: left; font-weight: 800; }
 th, td { padding: 12px 14px; border-bottom: 1px solid #d6ddd8; text-align: right; white-space: nowrap; }
 th:first-child, td:first-child { text-align: left; }
 thead th { color: #42544c; background: #eef2ef; font-size: .78rem; letter-spacing: .035em; }
+.remarks-cell { text-align: left; }
 
 .site-header, main, footer { width: min(1180px, calc(100% - 40px)); margin-inline: auto; }
 .site-header { display: flex; justify-content: space-between; gap: 32px; align-items: end; padding: 46px 0 28px; border-bottom: 1px solid #cbd3cd; }

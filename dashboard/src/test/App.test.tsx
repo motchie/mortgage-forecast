@@ -56,10 +56,11 @@ describe("住宅ローン予測ダッシュボード", () => {
     expect(screen.getByText("4か月検証済み")).toBeInTheDocument();
     expect(await screen.findByRole("table", { name: "一定金利ごとの返済リスク" })).toBeInTheDocument();
     const sensitivityTable = screen.getByRole("table", { name: "一定金利ごとの返済リスク" });
-    expect(within(sensitivityTable).getByRole("columnheader", { name: "備考" })).toBeInTheDocument();
+    expect(within(sensitivityTable).getByRole("columnheader", { name: "備考" })).toHaveClass("remarks-cell");
     expect(within(sensitivityTable).getByRole("row", { name: /1.8%/ })).toHaveTextContent("現在金利");
     expect(within(sensitivityTable).getByRole("row", { name: /3%/ })).toHaveTextContent("主要比較金利");
     expect(within(sensitivityTable).getByRole("row", { name: /5%/ })).toHaveTextContent("主要比較金利・追加最終返済あり");
+    expect(within(sensitivityTable).getByText("主要比較金利・追加最終返済あり")).toHaveClass("remarks-cell");
     expect(within(sensitivityTable).queryByRole("row", { name: /1.8%/ })).not.toHaveClass("highlight-row");
     expect(screen.getAllByText("未検証仮定あり").length).toBeGreaterThan(0);
     expect(screen.getByText(/モデル仕様やデータ品質に関する表示/)).toBeInTheDocument();
