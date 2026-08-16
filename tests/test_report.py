@@ -103,6 +103,10 @@ def test_public_document_matches_json_schema() -> None:
     assert list(validator.iter_errors(build_document())) == []
 
 
+def test_public_document_includes_borrower_birth_year() -> None:
+    assert build_document()["loans"][0]["borrower_birth_year"] == 1980
+
+
 def test_public_document_snapshot() -> None:
     expected = json.loads(
         (ROOT / "tests/fixtures/forecast_snapshot.json").read_text()

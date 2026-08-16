@@ -21,6 +21,7 @@ export interface ActualValidation {
 export interface Loan {
   id: string;
   display_name: string;
+  borrower_birth_year?: number;
   original_principal: number;
   disbursement_date: string;
   maturity_date: string;

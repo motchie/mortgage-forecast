@@ -142,6 +142,7 @@ const forecastFixture: ForecastDocument = {
     {
       id: "example-loan",
       display_name: "Example variable-rate loan",
+      borrower_birth_year: 1980,
       original_principal: 20_000_000,
       disbursement_date: "2020-04-20",
       maturity_date: "2045-04-20",

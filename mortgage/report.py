@@ -156,6 +156,11 @@ def _public_loan(
     return {
         "id": str(raw["id"]),
         "display_name": str(raw["name"]),
+        **(
+            {"borrower_birth_year": int(raw["borrower_birth_year"])}
+            if raw.get("borrower_birth_year") is not None
+            else {}
+        ),
         "original_principal": int(raw["original_principal"]),
         "disbursement_date": _iso(raw["disbursement_date"]),
         "maturity_date": _iso(raw["maturity_date"]),

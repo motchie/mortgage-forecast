@@ -71,6 +71,22 @@ def test_dashboard_chart_setting_must_be_boolean(tmp_path: Path) -> None:
         validate_data_directory(data_dir)
 
 
+def test_borrower_birth_year_must_not_be_after_current_balance_year(
+    tmp_path: Path,
+) -> None:
+    data_dir = copied_sample(tmp_path)
+    loan = data_dir / "loans/example-loan.yaml"
+    loan.write_text(
+        loan.read_text(encoding="utf-8").replace(
+            "borrower_birth_year: 1980", "borrower_birth_year: 2027"
+        ),
+        encoding="utf-8",
+    )
+
+    with pytest.raises(DataValidationError, match="borrower_birth_year"):
+        validate_data_directory(data_dir)
+
+
 def test_invalid_and_duplicated_loan_ids_are_rejected(tmp_path: Path) -> None:
     invalid = copied_sample(tmp_path / "invalid")
     loan_path = invalid / "loans/example-loan.yaml"

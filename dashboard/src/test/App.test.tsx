@@ -78,8 +78,29 @@ describe("住宅ローン予測ダッシュボード", () => {
 
     const toggles = screen.getAllByRole("button", { name: "データ表を表示" });
     await user.click(toggles[0]);
-    expect(screen.getByRole("table", { name: "残高推移の年次データ" })).toBeInTheDocument();
+    const balanceTable = screen.getByRole("table", { name: "残高推移の年次データ" });
+    expect(balanceTable).toBeInTheDocument();
+    expect(within(balanceTable).getByRole("columnheader", { name: "その年に迎える年齢" })).toBeInTheDocument();
+    expect(within(balanceTable).getAllByText("46歳").length).toBeGreaterThan(0);
     expect(toggles[0]).toHaveAttribute("aria-expanded", "true");
+  });
+
+  it("ペアローン合計の年次表に両方の契約者年齢を表示する", async () => {
+    const secondLoan = {
+      ...forecast.loans[0],
+      id: "second-loan",
+      display_name: "Second variable-rate loan",
+      borrower_birth_year: 1975,
+    };
+    mockForecast({
+      ...forecast,
+      presentation: { show_trend_charts: false },
+      loans: [...forecast.loans, secondLoan],
+    });
+    render(<App />);
+
+    const balanceTable = await screen.findByRole("table", { name: "残高推移の年次データ" });
+    expect(within(balanceTable).getAllByText("example-loan 46歳 / second-loan 51歳").length).toBeGreaterThan(0);
   });
 
   it("設定で推移グラフを非表示にし、データ表だけを表示する", async () => {

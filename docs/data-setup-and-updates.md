@@ -68,6 +68,7 @@ dashboard:
 | 分類 | 必要な値 | 入手元・注意 |
 |---|---|---|
 | 契約 | `original_principal`、`disbursement_date`、`maturity_date` | 契約書・返済予定表 |
+| 契約者属性 | `borrower_birth_year` | 西暦4桁。グラフと年次表に「その年に迎える年齢」を表示する場合に設定する |
 | 返済日 | `payment_day` | 毎月の約定返済日 |
 | 現在値 | `current.balance`、`balance_date` | 最新の銀行表示または返済後残高 |
 | 現在値 | `current.annual_rate` | `0.0175` は年1.75%を表す |
@@ -81,6 +82,10 @@ dashboard:
 `cap_ratio` を変更すれば別商品へ自動対応するわけではありません。見直し日はintervalから自動生成
 されないため、`schedule.dates` には現在より後の全日付を記載してください。過去日を残すとdashboard
 の「次回見直し」表示も過去日になるため、見直し完了後に削除します。
+
+`borrower_birth_year` は省略可能です。氏名や生年月日は保存せず、生まれ年だけをprivate dataに保存します。
+年齢は誕生日現在の満年齢ではなく、`表示年 − borrower_birth_year` で求める「その年に迎える年齢」です。
+この値も個人に関する情報のため、実データを公開repositoryへcommitしないでください。
 
 `unpaid_interest_policy` は通常 `error` とし、未払利息がある状態の見直しを未検証仮定で計算する
 場合だけ `exclude_unverified` を使用します。
@@ -215,7 +220,7 @@ MORTGAGE_DATA_DIR=../mortgage-forecast-private/data pytest -m private_actual
 ## 更新しなくてよいもの
 
 - `forecast.json`: generatorが作るため手編集しない
-- `original_principal`、`disbursement_date`: 契約変更がない限り固定
+- `original_principal`、`disbursement_date`、`borrower_birth_year`: 契約者変更がない限り固定
 - 過去のactual CSV行: 銀行値の訂正がない限り上書きしない
 - 元PDFや画面キャプチャ: repositoryへ保存しない
 

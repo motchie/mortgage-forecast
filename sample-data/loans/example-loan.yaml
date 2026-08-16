@@ -1,5 +1,6 @@
 id: example-loan
 name: Example variable-rate loan
+borrower_birth_year: 1980
 original_principal: 20000000
 disbursement_date: 2020-04-20
 maturity_date: 2045-04-20

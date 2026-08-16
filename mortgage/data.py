@@ -305,6 +305,18 @@ def validate_data_directory(data_dir: Path) -> None:
             field="current.balance_date",
             filename=path.name,
         )
+        borrower_birth_year = raw.get("borrower_birth_year")
+        if borrower_birth_year is not None:
+            parsed_birth_year = _bounded_integer(
+                borrower_birth_year,
+                label=f"borrower_birth_year in {path.name}",
+                minimum=1900,
+            )
+            if parsed_birth_year > current_date.year:
+                raise DataValidationError(
+                    f"borrower_birth_year in {path.name} must not be after "
+                    f"the current balance year {current_date.year}"
+                )
         maturity_date = _as_date(
             raw.get("maturity_date"), field="maturity_date", filename=path.name
         )

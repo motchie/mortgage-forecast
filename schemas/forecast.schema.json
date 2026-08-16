@@ -144,6 +144,7 @@
       "properties": {
         "id": { "type": "string" },
         "display_name": { "type": "string" },
+        "borrower_birth_year": { "type": "integer", "minimum": 1900 },
         "original_principal": { "$ref": "#/$defs/nonnegativeYen" },
         "disbursement_date": { "type": "string", "format": "date" },
         "maturity_date": { "type": "string", "format": "date" },

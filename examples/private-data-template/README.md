@@ -7,6 +7,8 @@
 
 計算に必要な匿名化済み数値だけを `data/` に保存します。氏名、住所、口座番号、支店番号、
 取引番号などは保存しません。銀行から取得した元PDFや画面キャプチャもcommitしません。
+グラフへ年齢を表示する場合はローン設定に生まれ年だけを `borrower_birth_year` として保存し、
+氏名や生年月日は保存しません。生まれ年もprivate情報として扱ってください。
 
 `generated/forecast.json` は派生した金融情報を含むためcommitせず、`.gitignore` の対象にします。
 private golden testに必要な `private-tests/fixtures/` のsnapshotをcommitする場合は、private
