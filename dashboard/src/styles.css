@@ -65,6 +65,8 @@ h1 { margin-bottom: 0; font-family: Georgia, "Yu Mincho", serif; font-size: clam
 .scenario-current { border-style: solid; }
 .scenario-title h3 { font-size: 1.35rem; }
 .scenario-description { min-height: 52px; }
+.rate-assumption-row { align-items: start; }
+.rate-assumption-row dd { max-width: 72%; line-height: 1.55; }
 .inline-alert { padding: 12px 14px; border-left: 4px solid #b56b2b; background: #fff3df; color: #633a16; font-size: .88rem; }
 .emphasis-row { color: #7b302c; }
 .result-warning-row { align-items: end; background: #fff8eb; }
@@ -146,6 +148,7 @@ footer { display: grid; grid-template-columns: repeat(2, 1fr); gap: 32px; paddin
   .loan-card-title, .scenario-title { flex-direction: column-reverse; }
   .data-list > div { align-items: start; flex-direction: column; gap: 2px; }
   .data-list dd { text-align: left; }
+  .rate-assumption-row dd { max-width: none; }
 }
 
 @media (forced-colors: active) {

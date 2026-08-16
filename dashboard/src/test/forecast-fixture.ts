@@ -112,6 +112,12 @@ const scenarios: Scenario[] = scenarioMetadata.map(([id, label]) => ({
   description: `Artificial ${label} scenario`,
   updated_at: "2026-08-15",
   verification_status: "scenario",
+  ...(id === "current"
+    ? { annual_rate: null, rate_source: "loan_current" }
+    : {
+        rates: [{ effective_date: "2027-01-01", annual_rate: id === "base" ? 0.02 : id === "higher" ? 0.03 : 0.05 }],
+        terminal_rate: id === "base" ? 0.02 : id === "higher" ? 0.03 : 0.05,
+      }),
   results: [result(id)],
 }));
 

@@ -43,6 +43,10 @@ describe("住宅ローン予測ダッシュボード", () => {
     expect(screen.getByRole("heading", { name: "Stress" })).toBeInTheDocument();
     expect(screen.getByText("現在の金利が続く機械的ケース")).toBeInTheDocument();
     expect(screen.getAllByText("将来金利についての手動仮定")).toHaveLength(3);
+    expect(screen.getByText("現在金利1.8%を継続")).toBeInTheDocument();
+    expect(screen.getByText("現在金利 → 2027年1月1日から2%（以後継続）")).toBeInTheDocument();
+    expect(screen.getByText("現在金利 → 2027年1月1日から3%（以後継続）")).toBeInTheDocument();
+    expect(screen.getByText("現在金利 → 2027年1月1日から5%（以後継続）")).toBeInTheDocument();
     expect(screen.getByText("Golden tests validated")).toBeInTheDocument();
     expect(screen.getByText("4か月検証済み")).toBeInTheDocument();
     expect(await screen.findByRole("table", { name: "一定金利ごとの返済リスク" })).toBeInTheDocument();

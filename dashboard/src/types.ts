@@ -67,7 +67,20 @@ export interface ScenarioResult {
   chart_data: { balance_series: BalancePoint[]; payment_series: PaymentPoint[]; annual_interest: Array<{ year: number; interest_paid: number }> };
 }
 
-export interface Scenario { id: string; label: string; type: string; description: string; updated_at: string; verification_status: VerificationStatus; results: ScenarioResult[] }
+export interface ScenarioRatePoint { effective_date: string; annual_rate: number }
+export interface Scenario {
+  id: string;
+  label: string;
+  type: string;
+  description: string;
+  updated_at: string;
+  verification_status: VerificationStatus;
+  annual_rate?: number | null;
+  rate_source?: string;
+  rates?: ScenarioRatePoint[];
+  terminal_rate?: number | null;
+  results: ScenarioResult[];
+}
 export interface CombinedScenario {
   scenario_id: string;
   monthly_combined_payment_series: Array<{ month: string; payment: number }>;

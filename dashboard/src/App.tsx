@@ -47,11 +47,32 @@ function combinedView(result: CombinedScenario): ScenarioView {
   return { next: result.next_payment_review, maximumPayment: result.maximum_combined_monthly_payment, capCount: result.payment_cap_trigger_count, capEvents: result.payment_cap_events, unpaid: result.unpaid_interest, finalPayment: result.combined_final_payment, extraFinalPayment: result.combined_extra_final_payment, totalInterest: result.combined_total_interest_paid, warnings: result.warnings };
 }
 
+function rateAssumption(scenario: Scenario, data: ForecastDocument, scope: string): string {
+  if (scenario.type === "constant_loan_rate") {
+    if (scenario.rate_source === "loan_current" || scenario.annual_rate == null) {
+      const loans = scope === "combined" ? data.loans : data.loans.filter((loan) => loan.id === scope);
+      const rates = loans.map((loan) => `${scope === "combined" && loans.length > 1 ? `${loan.id} ` : ""}${formatRate(loan.current.annual_rate)}`);
+      return `現在金利${rates.length === 1 ? rates[0] : `（${rates.join(" / ")}）`}を継続`;
+    }
+    return `${formatRate(scenario.annual_rate)}を継続`;
+  }
+
+  const points = scenario.rates ?? [];
+  const assumptions = ["現在金利", ...points.map((point) => `${formatDate(point.effective_date)}から${formatRate(point.annual_rate)}`)];
+  const lastRate = points.at(-1)?.annual_rate;
+  if (scenario.terminal_rate != null && scenario.terminal_rate !== lastRate) {
+    assumptions.push(`以後${formatRate(scenario.terminal_rate)}`);
+  } else if (points.length > 0) {
+    assumptions[assumptions.length - 1] += "（以後継続）";
+  }
+  return assumptions.join(" → ");
+}
+
 function ScopePicker({ value, data, onChange }: { value: string; data: ForecastDocument; onChange: (value: string) => void }) {
   return <label className="scope-picker"><span>表示対象</span><select value={value} onChange={(event) => onChange(event.target.value)}><option value="combined">ペアローン合計</option>{data.loans.map((loan) => <option key={loan.id} value={loan.id}>{loan.display_name}</option>)}</select></label>;
 }
 
-function ScenarioCard({ scenario, view }: { scenario: Scenario; view: ScenarioView }) {
+function ScenarioCard({ scenario, view, rate }: { scenario: Scenario; view: ScenarioView; rate: string }) {
   const warnings = uniqueWarnings(view.warnings);
   const isCurrent = scenario.id === "current";
   const hasUnverifiedWarning = warnings.some((warning) => warning.verification_status === "unverified");
@@ -60,6 +81,7 @@ function ScenarioCard({ scenario, view }: { scenario: Scenario; view: ScenarioVi
     <p className="scenario-description">{scenario.description}</p>
     {hasUnverifiedWarning && <p className="inline-alert"><strong>未検証の計算仮定を含みます。</strong> 金額と併せて注意事項を確認してください。</p>}
     <dl className="data-list">
+      <div className="rate-assumption-row"><dt>金利前提</dt><dd>{rate}</dd></div>
       <div><dt>次回見直し予想額</dt><dd>{view.next ? formatYen(view.next.expected_payment) : "—"}</dd></div>
       <div><dt>最大月返済額</dt><dd>{formatYen(view.maximumPayment)}</dd></div>
       <div><dt>125%上限発動</dt><dd>{view.capCount}回</dd></div>
@@ -122,7 +144,7 @@ function Dashboard({ data }: { data: ForecastDocument }) {
 
       <section className="section-block actual-block" aria-labelledby="loans-heading"><div className="section-heading"><p className="section-kicker">Actual / Loan details</p><h2 id="loans-heading">ローンごとの現在値</h2></div><div className="loan-grid">{data.loans.map((loan) => <article className="loan-card" key={loan.id}><div className="loan-card-title"><div><p>{loan.id}</p><h3>{loan.display_name}</h3></div><span className="status-chip">{loan.current.verification_status}</span></div><dl className="data-list"><div><dt>現在残高</dt><dd>{formatYen(loan.current.balance)}</dd></div><div><dt>現在金利</dt><dd>{formatRate(loan.current.annual_rate)}</dd></div><div><dt>月返済額</dt><dd>{formatYen(loan.current.monthly_payment)}</dd></div><div><dt>当初元金</dt><dd>{formatYen(loan.original_principal)}</dd></div><div><dt>最終返済日</dt><dd>{formatDate(loan.maturity_date)}</dd></div><div><dt>次回見直し</dt><dd>{loan.payment_review.schedule[0] ? formatDate(loan.payment_review.schedule[0]) : "—"}</dd></div><div><dt>見直しルール</dt><dd>{loan.payment_review.rule_verification_status}</dd></div></dl></article>)}</div></section>
 
-      <section className="section-block forecast-block" aria-labelledby="forecast-heading"><div className="section-heading-row"><div className="section-heading"><p className="section-kicker">Forecast / シナリオ</p><h2 id="forecast-heading">金利仮定ごとの返済リスク</h2><p>Currentは現在金利継続の機械的ケース、その他は手動設定した将来仮定です。銀行予測や確定値ではありません。</p></div><ScopePicker value={scope} data={data} onChange={setScope} /></div><div className="scenario-grid">{scenarios.map((scenario) => { const view = views.get(scenario.id); return view ? <ScenarioCard key={scenario.id} scenario={scenario} view={view} /> : null; })}</div></section>
+      <section className="section-block forecast-block" aria-labelledby="forecast-heading"><div className="section-heading-row"><div className="section-heading"><p className="section-kicker">Forecast / シナリオ</p><h2 id="forecast-heading">金利仮定ごとの返済リスク</h2><p>Currentは現在金利継続の機械的ケース、その他は手動設定した将来仮定です。銀行予測や確定値ではありません。</p></div><ScopePicker value={scope} data={data} onChange={setScope} /></div><div className="scenario-grid">{scenarios.map((scenario) => { const view = views.get(scenario.id); return view ? <ScenarioCard key={scenario.id} scenario={scenario} view={view} rate={rateAssumption(scenario, data, scope)} /> : null; })}</div></section>
 
       <section className="section-block charts-block" aria-labelledby="charts-heading"><div className="section-heading"><p className="section-kicker">Forecast / Trends</p><h2 id="charts-heading">残高と月返済額の推移</h2><p>グラフはPythonが計算した時系列を表示しています。表示対象は上の選択と連動します。</p></div><Suspense fallback={<p>グラフを読み込んでいます</p>}><div className="charts-grid"><ForecastLineChart title="残高推移" description="Current・Base・Higher・Stressの残高を比較" series={balanceSeries} valueLabel="年末残高" /><ForecastLineChart title="月返済額推移" description="5年ごとの見直しを階段状に表示" series={paymentSeries} valueLabel="月返済額" /></div></Suspense><ScrollableTable label="125%上限が発動した見直し" className="cap-table"><table><caption>125%上限が発動した見直し</caption><thead><tr><th scope="col">シナリオ</th><th scope="col">ローン</th><th scope="col">見直し日</th><th scope="col">理論額</th><th scope="col">上限額</th><th scope="col">採用額</th></tr></thead><tbody>{capEvents.length ? capEvents.map((event) => <tr key={`${event.scenarioId}-${event.loan_id}-${event.review_date}`}><th scope="row">{event.scenarioId}</th><td>{event.loan_id ?? scope}</td><td>{formatDate(event.review_date)}</td><td>{formatYen(Math.round(event.theoretical_payment))}</td><td>{formatYen(Math.round(event.payment_cap))}</td><td>{formatYen(event.new_payment)} <span className="cap-label">上限発動</span></td></tr>) : <tr><td colSpan={6}>上限発動はありません。</td></tr>}</tbody></table></ScrollableTable></section>
 
