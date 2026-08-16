@@ -1,0 +1,3 @@
+data_schema_version: "1.0"
+dataset_type: private
+description: Private mortgage inputs stored outside the public repository.

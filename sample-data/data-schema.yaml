@@ -1,0 +1,3 @@
+data_schema_version: "1.0"
+dataset_type: sample
+description: Artificial data for public examples and tests.

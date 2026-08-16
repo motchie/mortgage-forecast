@@ -1,0 +1,36 @@
+id: example-loan
+name: Example variable-rate loan
+original_principal: 20000000
+disbursement_date: 2020-04-20
+maturity_date: 2045-04-20
+payment_day: 20
+interest_calculation:
+  balance_unit_yen: 1
+  verification_status: contractual
+  source_id: example-interest-rule
+repayment:
+  method: equal_payment
+  bonus_payment: false
+  payment_review:
+    enabled: true
+    interval_years: 5
+    cap_ratio: "1.25"
+    unpaid_interest_policy: exclude_unverified
+    schedule:
+      verification_status: contractual
+      source_id: example-payment-review
+      dates:
+        - 2030-04-20
+        - 2035-04-20
+        - 2040-04-20
+rate:
+  type: variable_short_prime
+  rate_model:
+    type: short_prime_spread
+    spread: "-0.00500"
+    verification_status: scenario
+current:
+  annual_rate: "0.0180"
+  monthly_payment: 65000
+  balance: 14000000
+  balance_date: 2026-08-20

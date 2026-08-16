@@ -1,0 +1,89 @@
+settings:
+  stale_after_days: 90
+  sensitivity_rates:
+    - "0.010"
+    - "0.018"
+    - "0.020"
+    - "0.025"
+    - "0.030"
+    - "0.035"
+    - "0.040"
+    - "0.045"
+    - "0.050"
+    - "0.060"
+
+scenarios:
+  current:
+    label: Current rate unchanged
+    type: constant_loan_rate
+    description: Mechanical case where the sample current rate continues; not a forecast.
+    updated_at: 2026-08-15
+    source:
+      type: current_snapshot
+      description: Artificial current rate used by the sample dataset
+    verification_status: scenario
+    annual_rate: current
+
+  base:
+    label: Base
+    type: loan_rate_path
+    description: Artificial path with a gradual rate increase.
+    updated_at: 2026-08-15
+    source:
+      type: manual
+      description: Artificial base scenario
+    verification_status: scenario
+    rates:
+      - effective_date: 2027-01-21
+        annual_rate: "0.0220"
+      - effective_date: 2028-01-21
+        annual_rate: "0.0250"
+    terminal_rate: "0.0250"
+
+  higher:
+    label: Higher
+    type: loan_rate_path
+    description: Artificial path above Base.
+    updated_at: 2026-08-15
+    source:
+      type: manual
+      description: Artificial higher-rate scenario
+    verification_status: scenario
+    rates:
+      - effective_date: 2027-01-21
+        annual_rate: "0.0300"
+      - effective_date: 2028-01-21
+        annual_rate: "0.0350"
+    terminal_rate: "0.0350"
+
+  stress:
+    label: Stress
+    type: loan_rate_path
+    description: Artificial severe path for cap and unpaid-interest testing.
+    updated_at: 2026-08-15
+    source:
+      type: manual
+      description: Artificial stress scenario
+    verification_status: scenario
+    rates:
+      - effective_date: 2027-01-21
+        annual_rate: "0.0500"
+      - effective_date: 2028-01-21
+        annual_rate: "0.0600"
+    terminal_rate: "0.0600"
+
+  custom-short-prime:
+    label: Custom short prime
+    type: short_prime_path
+    description: Artificial short-prime path using the configured spread.
+    updated_at: 2026-08-15
+    source:
+      type: manual
+      description: Artificial short-prime scenario
+    verification_status: scenario
+    short_prime:
+      - effective_date: 2027-01-21
+        annual_rate: "0.0280"
+      - effective_date: 2028-01-21
+        annual_rate: "0.0300"
+    terminal_rate: "0.0300"

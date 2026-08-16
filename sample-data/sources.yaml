@@ -1,0 +1,42 @@
+sources:
+  - id: example-actual-schedule
+    publisher: Example Lender
+    type: actual
+    description: Artificial repayment schedule generated for this sample
+    retrieved_at: 2026-08-15
+
+  - id: example-payment-review
+    publisher: Example Lender
+    type: contractual
+    description: Artificial five-year payment review rule
+    retrieved_at: 2026-08-15
+
+  - id: example-interest-rule
+    publisher: Example Lender
+    type: contractual
+    description: Artificial whole-yen interest-bearing balance rule
+    retrieved_at: 2026-08-15
+
+  - id: loan-rate-spread-inferred
+    publisher: mortgage-forecast
+    type: scenario
+    description: Artificial spread used only by the sample dataset
+    retrieved_at: 2026-08-15
+
+  - id: payment-cap-rounding-unverified
+    publisher: mortgage-forecast
+    type: unverified
+    description: Rounding order for fractional payment caps is not generalized
+    retrieved_at: 2026-08-15
+
+  - id: unpaid-interest-review-unverified
+    publisher: mortgage-forecast
+    type: unverified
+    description: Payment review with unpaid interest uses an explicit unverified assumption
+    retrieved_at: 2026-08-15
+
+  - id: final-payment-rounding-unverified
+    publisher: mortgage-forecast
+    type: unverified
+    description: Exact final-period interest and rounding remain unverified
+    retrieved_at: 2026-08-15

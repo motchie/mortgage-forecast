@@ -1,0 +1,14 @@
+private/
+/data/
+*.pdf
+.env
+.env.*
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+dist/
+node_modules/
+*.tsbuildinfo
+dashboard/public/generated/forecast.json
+/screenshots/

@@ -1,0 +1,6 @@
+example-loan:
+  application_rule: next_payment_after_effective_date
+  verification_status: artificial_sample
+  changes:
+    - effective_date: 2026-01-21
+      annual_rate: "0.0180"
