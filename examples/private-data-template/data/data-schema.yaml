@@ -3,3 +3,4 @@ dataset_type: private
 description: Private mortgage inputs stored outside the public repository.
 dashboard:
   show_trend_charts: true
+  assume_scheduled_payments: true

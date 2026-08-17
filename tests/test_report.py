@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import shutil
 import subprocess
 import sys
 from datetime import date, datetime
@@ -105,6 +106,40 @@ def test_public_document_matches_json_schema() -> None:
 
 def test_public_document_includes_borrower_birth_year() -> None:
     assert build_document()["loans"][0]["borrower_birth_year"] == 1980
+
+
+def test_scheduled_payments_can_advance_current_state_as_an_inference(
+    tmp_path: Path,
+) -> None:
+    data_dir = tmp_path / "data"
+    shutil.copytree(SAMPLE_DATA, data_dir)
+    manifest = data_dir / "data-schema.yaml"
+    manifest.write_text(
+        manifest.read_text(encoding="utf-8").replace(
+            "assume_scheduled_payments: false",
+            "assume_scheduled_payments: true",
+        ),
+        encoding="utf-8",
+    )
+
+    document = build_forecast(
+        ROOT,
+        data_dir=data_dir,
+        generated_at=datetime.fromisoformat("2026-09-21T03:15:00+09:00"),
+    )
+    current = document["loans"][0]["current"]
+
+    assert current == {
+        "balance": 13_956_000,
+        "balance_date": "2026-09-20",
+        "basis_balance_date": "2026-08-20",
+        "annual_rate": 0.018,
+        "monthly_payment": 65_000,
+        "assumed_payment_count": 1,
+        "verification_status": "inferred",
+    }
+    assert document["combined"]["current_balance"] == 13_956_000
+    assert document["scenarios"][0]["results"][0]["starting_date"] == "2026-09-20"
 
 
 def test_public_document_snapshot() -> None:

@@ -54,11 +54,22 @@ dataset_type: private
 description: Private local mortgage data
 dashboard:
   show_trend_charts: false
+  assume_scheduled_payments: true
 ```
 
 `dashboard.show_trend_charts` は残高推移・月返済額推移の表示方法です。`true`ならグラフを表示し、
 必要に応じてデータ表を開けます。`false`ならグラフを表示せず、年次データ表だけを常時表示します。
 省略時は`true`です。一定金利の感応度分析グラフには影響しません。
+
+`dashboard.assume_scheduled_payments` を `true` にすると、`current.balance_date` より後で、JSON生成日
+以前の約定返済日について「予定どおり支払われた」と仮定し、表示上の残高・月返済額・シナリオの
+開始点を自動で前進させます。元の `current` は銀行確認済み基準値として書き換えません。自動更新後の
+値は `inferred` として、銀行確認基準日と仮定した返済回数をdashboardに表示します。実際の引き落とし
+確認ではありません。省略時は `false` です。
+
+この設定は、通常月に残高表示を保守する用途です。金利変更、返済額見直し、繰上返済、返済遅延、
+一部返済などがあった場合は、銀行画面・通知書を確認してloan YAMLの `current` と必要な金利・見直し
+情報を更新してください。
 
 ### `loans/<loan-id>.yaml`
 

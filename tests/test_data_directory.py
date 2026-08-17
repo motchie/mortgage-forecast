@@ -71,6 +71,24 @@ def test_dashboard_chart_setting_must_be_boolean(tmp_path: Path) -> None:
         validate_data_directory(data_dir)
 
 
+def test_assumed_payment_setting_must_be_boolean(tmp_path: Path) -> None:
+    data_dir = copied_sample(tmp_path)
+    manifest = data_dir / "data-schema.yaml"
+    manifest.write_text(
+        manifest.read_text(encoding="utf-8").replace(
+            "assume_scheduled_payments: false",
+            'assume_scheduled_payments: "true"',
+        ),
+        encoding="utf-8",
+    )
+
+    with pytest.raises(
+        DataValidationError,
+        match="assume_scheduled_payments must be a boolean",
+    ):
+        validate_data_directory(data_dir)
+
+
 def test_borrower_birth_year_must_not_be_after_current_balance_year(
     tmp_path: Path,
 ) -> None:

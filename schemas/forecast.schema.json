@@ -148,12 +148,29 @@
         "original_principal": { "$ref": "#/$defs/nonnegativeYen" },
         "disbursement_date": { "type": "string", "format": "date" },
         "maturity_date": { "type": "string", "format": "date" },
-        "current": { "type": "object" },
+        "current": { "$ref": "#/$defs/currentLoanState" },
         "repayment": { "type": "object" },
         "interest_calculation": { "type": "object" },
         "payment_review": { "type": "object" },
         "rate_model": { "type": "object" },
         "actual_validation": { "type": "object" }
+      }
+    },
+    "currentLoanState": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "balance", "balance_date", "basis_balance_date", "annual_rate",
+        "monthly_payment", "assumed_payment_count", "verification_status"
+      ],
+      "properties": {
+        "balance": { "$ref": "#/$defs/nonnegativeYen" },
+        "balance_date": { "type": "string", "format": "date" },
+        "basis_balance_date": { "type": "string", "format": "date" },
+        "annual_rate": { "$ref": "#/$defs/rate" },
+        "monthly_payment": { "$ref": "#/$defs/nonnegativeYen" },
+        "assumed_payment_count": { "$ref": "#/$defs/nonnegativeYen" },
+        "verification_status": { "enum": ["actual", "inferred"] }
       }
     },
     "warning": {

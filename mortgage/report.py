@@ -9,6 +9,7 @@ from __future__ import annotations
 import csv
 import io
 from collections import defaultdict
+from dataclasses import replace
 from datetime import date, datetime, timezone
 from decimal import Decimal
 from pathlib import Path
@@ -85,6 +86,65 @@ def _presentation(data_dir: Path) -> dict[str, bool]:
     return {"show_trend_charts": bool(dashboard.get("show_trend_charts", True))}
 
 
+def _assume_scheduled_payments(data_dir: Path) -> bool:
+    """Return whether scheduled repayments should advance the displayed state."""
+
+    manifest = _load_yaml(data_dir, data_dir / "data-schema.yaml")
+    dashboard = manifest.get("dashboard", {})
+    return bool(dashboard.get("assume_scheduled_payments", False))
+
+
+def _roll_forward_loan(
+    loan: LoanForecastInput, *, through: date
+) -> tuple[LoanForecastInput, int]:
+    """Advance a confirmed snapshot through scheduled payments up to ``through``.
+
+    This is deliberately a projection, not an assertion that a bank withdrawal
+    occurred. The caller exposes the count and inferred status in public JSON.
+    """
+
+    if through <= loan.starting_date:
+        return loan, 0
+    scenario = ConstantLoanRateScenario(
+        ScenarioMetadata(
+            id="assumed-current-roll-forward",
+            label="Assumed current roll-forward",
+            description="Scheduled payments assumed paid through generation date.",
+            updated_at=through,
+            source=ScenarioSource("generated", "Scheduled payment assumption"),
+            verification_status="inferred",
+        ),
+        "current",
+    )
+    simulated = simulate_scenario(loan, scenario, as_of=through)
+    assumed = tuple(
+        payment for payment in simulated.monthly_results if payment.date <= through
+    )
+    if not assumed:
+        return loan, 0
+    latest = assumed[-1]
+    if latest.unpaid_interest_after:
+        raise ValueError(
+            f"{loan.loan_id}: assumed payment roll-forward cannot carry unpaid "
+            "interest; update the confirmed snapshot or disable the assumption"
+        )
+    return (
+        replace(
+            loan,
+            starting_balance=latest.balance_after,
+            starting_date=latest.date,
+            current_annual_rate=latest.annual_rate,
+            current_payment=latest.payment,
+            payment_review_dates=tuple(
+                review_date
+                for review_date in loan.payment_review_dates
+                if review_date > latest.date
+            ),
+        ),
+        len(assumed),
+    )
+
+
 def _load_actual_rate_changes(data_dir: Path, loan_id: str) -> list[RateChange]:
     raw = _load_yaml(data_dir, data_dir / "rates/actual-rates.yaml")[loan_id]
     return [
@@ -145,7 +205,11 @@ def _build_actual_for_loan(
 
 
 def _public_loan(
-    raw: dict[str, Any], actual_rows: list[dict[str, Any]], maximum_error: int
+    raw: dict[str, Any],
+    effective: LoanForecastInput,
+    assumed_payment_count: int,
+    actual_rows: list[dict[str, Any]],
+    maximum_error: int,
 ) -> dict[str, Any]:
     current = raw["current"]
     repayment = raw["repayment"]
@@ -165,11 +229,15 @@ def _public_loan(
         "disbursement_date": _iso(raw["disbursement_date"]),
         "maturity_date": _iso(raw["maturity_date"]),
         "current": {
-            "balance": int(current["balance"]),
-            "balance_date": _iso(current["balance_date"]),
-            "annual_rate": float(current["annual_rate"]),
-            "monthly_payment": int(current["monthly_payment"]),
-            "verification_status": "actual",
+            "balance": effective.starting_balance,
+            "balance_date": _iso(effective.starting_date),
+            "basis_balance_date": _iso(current["balance_date"]),
+            "annual_rate": _number(effective.current_annual_rate),
+            "monthly_payment": effective.current_payment,
+            "assumed_payment_count": assumed_payment_count,
+            "verification_status": (
+                "inferred" if assumed_payment_count else "actual"
+            ),
         },
         "repayment": {
             "method": str(repayment["method"]),
@@ -184,7 +252,7 @@ def _public_loan(
             "source_ids": [str(interest_calculation["source_id"])],
         },
         "payment_review": {
-            "schedule": [_iso(item) for item in schedule["dates"]],
+            "schedule": [_iso(item) for item in effective.payment_review_dates],
             "rule_verification_status": str(schedule["verification_status"]),
             "source_ids": [str(schedule["source_id"])],
         },
@@ -709,9 +777,21 @@ def build_forecast(
         data_dir / "rates/scenarios.yaml", data_dir=data_dir
     )
     loan_paths = sorted((data_dir / "loans").glob("*.yaml"))
-    loans = [
+    baseline_loans = [
         load_loan_forecast_input(path, data_dir=data_dir) for path in loan_paths
     ]
+    if _assume_scheduled_payments(data_dir):
+        rolled = [
+            _roll_forward_loan(loan, through=generated_date)
+            for loan in baseline_loans
+        ]
+        loans = [loan for loan, _ in rolled]
+        assumed_payment_counts = {
+            loan.loan_id: count for loan, count in rolled
+        }
+    else:
+        loans = baseline_loans
+        assumed_payment_counts = {loan.loan_id: 0 for loan in loans}
     raw_loans = [_load_yaml(data_dir, path) for path in loan_paths]
     sources = _load_sources(data_dir)
     actual_source_id = next(
@@ -724,7 +804,7 @@ def build_forecast(
     actual_error_by_loan: dict[str, int] = {}
     actual_matches: list[bool] = []
     actual_balance_errors: list[int] = []
-    for loan in loans:
+    for loan in baseline_loans:
         rows, matches, balance_error = _build_actual_for_loan(
             data_dir,
             loan.loan_id,
@@ -836,6 +916,8 @@ def build_forecast(
         "loans": [
             _public_loan(
                 raw,
+                next(loan for loan in loans if loan.loan_id == str(raw["id"])),
+                assumed_payment_counts[str(raw["id"])],
                 actual_rows_by_loan.get(str(raw["id"]), []),
                 actual_error_by_loan.get(str(raw["id"]), 0),
             )

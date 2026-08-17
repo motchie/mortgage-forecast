@@ -101,6 +101,29 @@ describe("住宅ローン予測ダッシュボード", () => {
     expect(screen.getByText("現在金利 → 2036年から毎年0.1ポイントずつ上昇（各年1月10日の次回返済から適用） → 2040年にexample-loan 2.975% / second-loan 2.985%で頭打ち")).toBeInTheDocument();
   });
 
+  it("予定返済で前進した現在値を実績と誤認させない", async () => {
+    mockForecast({
+      ...forecast,
+      loans: forecast.loans.map((loan) => ({
+        ...loan,
+        current: {
+          ...loan.current,
+          balance: 13_956_000,
+          balance_date: "2026-09-20",
+          assumed_payment_count: 1,
+          verification_status: "inferred",
+        },
+      })),
+      combined: { ...forecast.combined, current_balance: 13_956_000 },
+    });
+    render(<App />);
+
+    expect(await screen.findByText("Current / 推定現在値")).toBeInTheDocument();
+    expect(screen.getByText(/実際の引き落とし確認ではありません/)).toBeInTheDocument();
+    expect(screen.getByText("銀行確認基準日")).toBeInTheDocument();
+    expect(screen.getByText("仮定した返済")).toBeInTheDocument();
+  });
+
   it("表示対象とグラフの代替表をキーボード操作可能なUIで切り替える", async () => {
     mockForecast();
     const user = userEvent.setup();

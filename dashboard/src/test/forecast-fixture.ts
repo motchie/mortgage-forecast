@@ -151,8 +151,10 @@ const forecastFixture: ForecastDocument = {
       current: {
         balance: 14_000_000,
         balance_date: "2026-08-20",
+        basis_balance_date: "2026-08-20",
         annual_rate: 0.018,
         monthly_payment: 65_000,
+        assumed_payment_count: 0,
         verification_status: "actual",
       },
       repayment: { method: "equal_payment", payment_day: 20, bonus_payment: false },

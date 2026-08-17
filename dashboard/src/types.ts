@@ -25,7 +25,15 @@ export interface Loan {
   original_principal: number;
   disbursement_date: string;
   maturity_date: string;
-  current: { balance: number; balance_date: string; annual_rate: number; monthly_payment: number; verification_status: VerificationStatus };
+  current: {
+    balance: number;
+    balance_date: string;
+    basis_balance_date: string;
+    annual_rate: number;
+    monthly_payment: number;
+    assumed_payment_count: number;
+    verification_status: VerificationStatus;
+  };
   repayment: { method: string; payment_day: number; bonus_payment: boolean };
   payment_review: { schedule: string[]; rule_verification_status: VerificationStatus; source_ids: string[] };
   rate_model: { type: string; spread: number; verification_status: VerificationStatus; source_ids: string[] };

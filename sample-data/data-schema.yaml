@@ -3,3 +3,4 @@ dataset_type: sample
 description: Artificial data for public examples and tests.
 dashboard:
   show_trend_charts: true
+  assume_scheduled_payments: false

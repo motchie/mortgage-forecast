@@ -233,6 +233,10 @@ def validate_data_directory(data_dir: Path) -> None:
         raise DataValidationError(
             "data-schema.yaml dashboard.show_trend_charts must be a boolean"
         )
+    if not isinstance(dashboard.get("assume_scheduled_payments", False), bool):
+        raise DataValidationError(
+            "data-schema.yaml dashboard.assume_scheduled_payments must be a boolean"
+        )
 
     loan_paths = sorted((data_dir / "loans").glob("*.yaml"))
     if not loan_paths:
