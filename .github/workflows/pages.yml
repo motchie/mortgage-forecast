@@ -34,7 +34,8 @@ jobs:
         run: python scripts/generate_forecast.py --data-dir sample-data
 
       - name: Verify sample provenance
-        run: python -c 'import json; from pathlib import Path; document = json.loads(Path("dashboard/public/generated/forecast.json").read_text()); assert document["data_source"] == {"type": "sample"}'
+        run: |
+          python -c 'import json; from pathlib import Path; document = json.loads(Path("dashboard/public/generated/forecast.json").read_text()); assert document["data_source"] == {"type": "sample"}'
 
       - name: Test calculation engine and JSON Schema
         run: python -m pytest
