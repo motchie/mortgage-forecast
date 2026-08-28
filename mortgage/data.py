@@ -179,14 +179,13 @@ def resolve_data_directory(
     environment = os.environ if environment is None else environment
     if cli_data_dir is not None:
         selected = cli_data_dir
-        source_type = "external"
     elif environment.get(DATA_DIR_ENV):
         selected = Path(environment[DATA_DIR_ENV])
-        source_type = "external"
     else:
         selected = repository_root / "sample-data"
-        source_type = "sample"
     path = selected.expanduser().resolve()
+    sample_path = (repository_root / "sample-data").resolve()
+    source_type = "sample" if path == sample_path else "external"
     validate_data_directory(path)
     return ResolvedDataDirectory(path=path, source_type=source_type)
 

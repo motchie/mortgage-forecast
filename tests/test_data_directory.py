@@ -33,12 +33,15 @@ def test_data_directory_priority_is_cli_then_environment_then_sample(tmp_path: P
         ROOT, environment={"MORTGAGE_DATA_DIR": str(external)}
     )
     by_default = resolve_data_directory(ROOT, environment={})
+    explicit_sample = resolve_data_directory(ROOT, SAMPLE_DATA, environment={})
 
     assert by_cli.path == external.resolve()
     assert by_cli.source_type == "external"
     assert by_environment.path == external.resolve()
     assert by_default.path == SAMPLE_DATA.resolve()
     assert by_default.source_type == "sample"
+    assert explicit_sample.path == SAMPLE_DATA.resolve()
+    assert explicit_sample.source_type == "sample"
 
 
 def test_missing_required_file_has_clear_error(tmp_path: Path) -> None:

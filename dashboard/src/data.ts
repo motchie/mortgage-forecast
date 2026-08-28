@@ -10,7 +10,7 @@ export function parseForecast(value: unknown): ForecastDocument {
 }
 
 export async function loadForecast(): Promise<ForecastDocument> {
-  const response = await fetch("/generated/forecast.json");
+  const response = await fetch(`${import.meta.env.BASE_URL}generated/forecast.json`);
   if (!response.ok) throw new Error("forecast fetch failed");
   return parseForecast(await response.json());
 }

@@ -9,6 +9,12 @@ local-firstダッシュボードです。Python計算エンジンとReactダッ�
 > **Status: pre-release / experimental.** 個別商品の実績検証なしに、銀行商品全般へ適用できる
 > 安定版とは位置付けていません。
 
+**[人工サンプルデータの公開デモを見る](https://mortgage-demo.motchie.com/)**
+
+公開デモに表示される金額・日付・契約条件はすべて人工データであり、実在する契約や金融機関とは
+関係ありません。mainへpushされた公開コードは、sample data限定のGitHub Actionsを通じて
+GitHub Pagesへ自動デプロイされます。
+
 ## 画面イメージ
 
 ![人工サンプルデータを表示した住宅ローン予測ダッシュボード。ローンの現在地として、現在残高1,400万円、月返済額6万5,000円、返済済み元金600万円、元金返済率30%などをカードで表示している。](docs/images/dashboard-sample.png)

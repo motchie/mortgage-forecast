@@ -122,6 +122,7 @@ function ScenarioCard({ scenario, view, rate }: { scenario: Scenario; view: Scen
 }
 
 function Dashboard({ data }: { data: ForecastDocument }) {
+  const isSample = data.data_source.type === "sample";
   const [scope, setScope] = useState("combined");
   const scenarios = data.scenarios.filter((scenario) => DISPLAY_SCENARIOS.includes(scenario.id));
   const maturity = data.loans.map((loan) => loan.maturity_date).sort().at(-1);
@@ -168,7 +169,7 @@ function Dashboard({ data }: { data: ForecastDocument }) {
     .map((loan) => loan.current.annual_rate));
 
   return <>
-    <header className="site-header"><div><p className="eyebrow">LOCAL ONLY · {data.data_source.type === "sample" ? "SAMPLE DATA" : "EXTERNAL DATA"}</p><h1>住宅ローン予測ダッシュボード</h1></div><p>最終生成: <time dateTime={data.generated_at}>{formatDateTime(data.generated_at)}</time></p></header>
+    <header className="site-header"><div><p className="eyebrow">{isSample ? "PUBLIC DEMO · ARTIFICIAL SAMPLE DATA" : "PRIVATE · EXTERNAL DATA"}</p><h1>住宅ローン予測ダッシュボード</h1>{isSample && <p className="demo-notice" role="note">この画面は人工サンプルデータによる公開デモです。実在する契約・金融機関とは関係ありません。</p>}</div><p>最終生成: <time dateTime={data.generated_at}>{formatDateTime(data.generated_at)}</time></p></header>
     <main>
       <section className="current-panel" aria-labelledby="current-heading"><div className="section-heading"><p className="section-kicker">{hasAssumedPayments ? "Current / 推定現在値" : "Actual / 現在・実績"}</p><h2 id="current-heading">ローンの現在地</h2><p>{hasAssumedPayments ? `銀行確認済みの基準残高から、予定返済を合計${assumedPaymentCount}回実行したと仮定して更新した推定値です。実際の引き落とし確認ではありません。` : data.data_source.type === "sample" ? "架空のサンプル返済予定表を使った現在値です。" : "外部データディレクトリの銀行確認済み現在値です。"} 将来シナリオとは分けて表示しています。</p></div><div className="metric-grid"><article className="metric metric-primary"><span>現在残高</span><strong>{formatYen(data.combined.current_balance)}</strong></article><article className="metric"><span>月返済額</span><strong>{formatYen(data.combined.current_monthly_payment)}</strong></article><article className="metric"><span>返済済み元金</span><strong>{formatYen(combinedRepaidPrincipal)}</strong></article><article className="metric"><span>元金返済率</span><strong>{formatPercentage(combinedRepaidRatio)}</strong></article><article className="metric"><span>ローン本数</span><strong>{data.loans.length}本</strong></article><article className="metric"><span>最終返済日</span><strong>{maturity ? formatDate(maturity) : "—"}</strong></article><article className="metric"><span>次回返済額見直し</span><strong>{nextReview ? formatDate(nextReview) : "—"}</strong></article></div></section>
 
@@ -192,7 +193,7 @@ function Dashboard({ data }: { data: ForecastDocument }) {
 
       <section className="section-block sources-block" aria-labelledby="sources-heading"><div className="section-heading"><p className="section-kicker">Sources</p><h2 id="sources-heading">根拠・前提</h2></div><div className="source-list">{data.sources.map((source) => <article key={source.id}><div><span className="status-chip">{source.type}</span><h3>{source.description}</h3><p>{source.publisher} · 取得日 {formatDate(source.retrieved_at)}</p></div>{source.url && <a href={source.url} target="_blank" rel="noreferrer">公式資料を開く<span className="sr-only">（新しいタブ）</span></a>}</article>)}</div></section>
     </main>
-    <footer><p>このダッシュボードは住宅ローン返済条件のシミュレーションであり、金融アドバイスではありません。将来金利や返済額を保証するものではありません。</p><p>個人の住宅ローン情報を含むローカル専用画面です。公開デプロイしないでください。</p></footer>
+    <footer><p>このダッシュボードは住宅ローン返済条件のシミュレーションであり、金融アドバイスではありません。将来金利や返済額を保証するものではありません。</p><p>{isSample ? "表示している金額・日付・契約条件はすべて公開デモ用の人工データです。" : "個人の住宅ローン情報を含むローカル専用画面です。公開デプロイしないでください。"}</p></footer>
   </>;
 }
 

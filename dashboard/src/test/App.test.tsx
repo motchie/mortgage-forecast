@@ -41,7 +41,9 @@ describe("住宅ローン予測ダッシュボード", () => {
     expect(screen.getAllByText("返済済み元金")).toHaveLength(2);
     expect(screen.getAllByText("元金返済率")).toHaveLength(2);
     expect(screen.getAllByRole("heading", { name: "Example variable-rate loan" })).toHaveLength(2);
-    expect(screen.getByText("LOCAL ONLY · SAMPLE DATA")).toBeInTheDocument();
+    expect(screen.getByText("PUBLIC DEMO · ARTIFICIAL SAMPLE DATA")).toBeInTheDocument();
+    expect(screen.getByText(/人工サンプルデータによる公開デモ/)).toBeInTheDocument();
+    expect(screen.getByText(/公開デモ用の人工データ/)).toBeInTheDocument();
     expect(screen.getByRole("heading", { name: "Current" })).toBeInTheDocument();
     expect(screen.getByRole("heading", { name: "Base" })).toBeInTheDocument();
     expect(screen.getByRole("heading", { name: "Higher" })).toBeInTheDocument();

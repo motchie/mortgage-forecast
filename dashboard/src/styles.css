@@ -24,6 +24,7 @@ thead th { color: #42544c; background: #eef2ef; font-size: .78rem; letter-spacin
 .site-header, main, footer { width: min(1180px, calc(100% - 40px)); margin-inline: auto; }
 .site-header { display: flex; justify-content: space-between; gap: 32px; align-items: end; padding: 46px 0 28px; border-bottom: 1px solid #cbd3cd; }
 .site-header > p { margin: 0; color: #526059; font-size: .86rem; white-space: nowrap; }
+.demo-notice { max-width: 680px; margin: 14px 0 0; padding: 10px 13px; color: #3f554c; background: #e7efe9; border-left: 4px solid #376453; font-size: .82rem; }
 h1 { margin-bottom: 0; font-family: Georgia, "Yu Mincho", serif; font-size: clamp(1.55rem, 3.3vw, 2.8rem); letter-spacing: -.035em; overflow-wrap: anywhere; }
 .eyebrow, .section-kicker { margin-bottom: 8px; color: #376453; font-size: .76rem; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; }
 .section-block { padding: 64px 0; border-top: 1px solid #cbd3cd; }
